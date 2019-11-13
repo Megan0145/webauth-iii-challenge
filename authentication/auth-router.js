@@ -2,6 +2,7 @@ const router = require("express").Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const generateToken = require("./tokenGenerator");
+const restricted = require("./restricted");
 
 const users = require("../users/users-model");
 
@@ -43,6 +44,27 @@ router.post("/login", (req, res) => {
     .catch(err => {
       res.status(500).json({ message: "Could not login user: " + err.message });
     });
+});
+
+router.get("/users", restricted, (req, res) => {
+  if (req.decodedToken) {
+    users
+      .find()
+      .then(users => {
+        res.status(200).json(users);
+      })
+      .catch(err => {
+        res
+          .status(500)
+          .json({
+            message: "Something went wrong retrieving users: " + err.message
+          });
+      });
+  } else {
+    res
+      .status(401)
+      .json({ message: "Unauthorized. You must be logged in to view users" });
+  }
 });
 
 module.exports = router;
