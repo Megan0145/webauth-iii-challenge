@@ -53,7 +53,7 @@ router.post("/login", validateUser, (req, res) => {
 router.get("/users", restricted, (req, res) => {
   if (req.decodedToken) {
     users
-      .find()
+      .findByDepartment(req.decodedToken.department)
       .then(users => {
         res.status(200).json(users);
       })
