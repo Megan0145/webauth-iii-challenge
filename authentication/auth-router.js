@@ -2,11 +2,15 @@ const router = require("express").Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const generateToken = require("./tokenGenerator");
-const restricted = require("./restricted");
+const {
+  restricted,
+  validateUser,
+  validateDepartment
+} = require("../middleware/");
 
 const users = require("../users/users-model");
 
-router.post("/register", (req, res) => {
+router.post("/register", validateUser, validateDepartment, (req, res) => {
   const hashedpw = bcrypt.hashSync(req.body.password, 10);
   const newUser = {
     username: req.body.username,
@@ -26,7 +30,7 @@ router.post("/register", (req, res) => {
     });
 });
 
-router.post("/login", (req, res) => {
+router.post("/login", validateUser, (req, res) => {
   const { username, password } = req.body;
 
   users
@@ -54,11 +58,9 @@ router.get("/users", restricted, (req, res) => {
         res.status(200).json(users);
       })
       .catch(err => {
-        res
-          .status(500)
-          .json({
-            message: "Something went wrong retrieving users: " + err.message
-          });
+        res.status(500).json({
+          message: "Something went wrong retrieving users: " + err.message
+        });
       });
   } else {
     res
