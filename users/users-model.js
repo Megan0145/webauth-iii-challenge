@@ -3,7 +3,8 @@ const db = require("../data/db-config");
 module.exports = {
   add,
   find,
-  findByUsername
+  findByUsername,
+  findByDepartment
 };
 
 function add(user) {
@@ -25,4 +26,8 @@ function findByUsername(username) {
   return db("users")
     .where({ username })
     .first();
+}
+
+function findByDepartment(department) {
+    return db("users").where({department})
 }
