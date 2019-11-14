@@ -7,6 +7,7 @@ import Signup from './Signup';
 export default function Navbar(props){
     const logout = () => {
         localStorage.removeItem("token");
+        console.log(props)
     }
     return(
         <div>
